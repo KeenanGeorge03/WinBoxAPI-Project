@@ -213,14 +213,21 @@ namespace Winbox_API_C_Sharp
             string registration_table;
             string[,] resource_input = new string[2, 0];
             string resources;
-            string registration_data;            
-            resources = "!re.tag=sss=uptime=4d15h20m38s=version=6.27=build-time=Feb/11/2015 13:24:13=free-memory=36741120=total-memory=67108864=cpu=MIPS 24Kc V7.4=cpu-count=1=cpu-frequency=400=cpu-load=28=free-hdd-space=116649984=total-hdd-space=134217728=write-sect-since-reboot=1070=write-sect-total=8926=bad-blocks=0=architecture-name=mipsbe=board-name=RB OmniTIK UPA-5HnD=platform=MikroTik";
-            resource_respon_cleanup(resources);
-            registration_table = command("/interface/wireless/registration-table/getall");
-            registration_data = "!re.tag=sss=.id=*2=interface=Snake_AP1=radio-name=Gixxer->SnakeOmni=mac-address=4C:5E:0C:0F:2B:3B=ap=false=wds=false=bridge=false=rx-rate=26Mbps-20MHz/2S=tx-rate=60Mbps-40MHz/2S/SGI=packets=37184706,33176656=bytes=2871035632,2916519196=frames=33370529,16861527=frame-bytes=2887997970,2977703980=uptime=4d15h19m47s=last-activity=0ms=signal-strength=-76=signal-to-noise=40=signal-strength-ch0=-77=signal-strength-ch1=-82=tx-signal-strength-ch0=-81=tx-signal-strength-ch1=-76=strength-at-rates=-76@6Mbps 0ms,-75@HT20-0 27m45s620ms,-77@HT20-1 150ms,-76@HT20-2 780ms,-78@HT20-3 680ms,-78@HT20-4 890ms,-80@HT40-0 480ms,-80@HT40-1 290ms,-80@HT40-2 300ms,-80@HT40-3 20s830ms,-79@HT40-4 35m3s770ms=tx-signal-strength=-75=tx-ccq=76=rx-ccq=33=distance=2=routeros-version=6.19=last-ip=172.18.116.81=tx-rate-set=BW:1x-2x SGI:2x HT:0-4,9-10=tdma-timing-offset=10=tdma-tx-size=496=tdma-rx-size=1008=tdma-retx=24=tdma-winfull=0";
-            registration_respon_cleanup(registration_data);           
+            string registration_data;
+            string rb_wireless_data;           
+            //resources = "!re.tag=sss=uptime=4d15h20m38s=version=6.27=build-time=Feb/11/2015 13:24:13=free-memory=36741120=total-memory=67108864=cpu=MIPS 24Kc V7.4=cpu-count=1=cpu-frequency=400=cpu-load=28=free-hdd-space=116649984=total-hdd-space=134217728=write-sect-since-reboot=1070=write-sect-total=8926=bad-blocks=0=architecture-name=mipsbe=board-name=RB OmniTIK UPA-5HnD=platform=MikroTik";
+            //resource_respon_cleanup(resources);
+            //registration_table = command("/interface/wireless/registration-table/getall");
+            //rb_wireless_data = command("/interface/wireless/print");
+            rb_wireless_data = ("!re.tag=sss=.id=*6=default-name=wlan1=name=Snake_AP1=mtu=1500=l2mtu=1600=mac-address=4C:5E:0C:AF:58:0F=arp=enabled=disable-running-check=false=interface-type=Atheros AR92xx=radio-name=Snake_AP1=mode=ap-bridge=ssid=http:\\ctwug.za.netSnake_AP1=area==frequency-mode=superchannel=country=ireland=antenna-gain=0=frequency=5475=band=5ghz-onlyn=channel-width=20/40mhz-Ce=scan-list=default,5400-5500=wireless-protocol=nv2=rate-set=configured=supported-rates-a/g==basic-rates-a/g==max-station-count=2007=distance=dynamic=tx-power-mode=default=noise-floor-threshold=default=nv2-noise-floor-offset=default=dfs-mode=none=vlan-mode=no-tag=vlan-id=1=wds-mode=disabled=wds-default-bridge=none=wds-default-cost=100=wds-cost-range=50-150=wds-ignore-ssid=false=update-stats-interval=disabled=bridge-mode=enabled=default-authentication=true=default-forwarding=true=default-ap-tx-limit=0=default-client-tx-limit=0=proprietary-extensions=post-2.9.25=wmm-support=disabled=hide-ssid=false=security-profile=default=interworking-profile=disabled=disconnect-timeout=3s=on-fail-retry-time=100ms=preamble-mode=both=compression=false=allow-sharedkey=false=station-bridge-clone-mac=00:00:00:00:00:00=ampdu-priorities=0=guard-interval=any=ht-supported-mcs=mcs-0,mcs-1,mcs-2,mcs-3,mcs-4,mcs-9,mcs-10,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23=ht-basic-mcs=mcs-0,mcs-1,mcs-2,mcs-3,mcs-4,mcs-9,mcs-10=tx-chains=0,1=rx-chains=0,1=amsdu-limit=8192=amsdu-threshold=8192=tdma-period-size=2=nv2-queue-count=2=nv2-qos=default=nv2-cell-radius=10=nv2-security=disabled=nv2-preshared-key==hw-retries=7=frame-lifetime=0=adaptive-noise-immunity=none=hw-fragmentation-threshold=disabled=hw-protection-mode=none=hw-protection-threshold=0=frequency-offset=0=rate-selection=advanced=multicast-helper=default=multicast-buffering=enabled=keepalive-frames=enabled=running=true=disabled=false=comment=client;512;!done.tag=sss");
+            rb_wireless_data_cleanup(rb_wireless_data);
+            //StreamWriter outputStream = File.CreateText(@"c:\data\data.csv");
+            //outputStream.WriteLine(rb_wireless_data);
+            //outputStream.Close();
+            // registration_data = "!re.tag=sss=.id=*2=interface=Snake_AP1=radio-name=Gixxer->SnakeOmni=mac-address=4C:5E:0C:0F:2B:3B=ap=false=wds=false=bridge=false=rx-rate=26Mbps-20MHz/2S=tx-rate=60Mbps-40MHz/2S/SGI=packets=37184706,33176656=bytes=2871035632,2916519196=frames=33370529,16861527=frame-bytes=2887997970,2977703980=uptime=4d15h19m47s=last-activity=0ms=signal-strength=-76=signal-to-noise=40=signal-strength-ch0=-77=signal-strength-ch1=-82=tx-signal-strength-ch0=-81=tx-signal-strength-ch1=-76=strength-at-rates=-76@6Mbps 0ms,-75@HT20-0 27m45s620ms,-77@HT20-1 150ms,-76@HT20-2 780ms,-78@HT20-3 680ms,-78@HT20-4 890ms,-80@HT40-0 480ms,-80@HT40-1 290ms,-80@HT40-2 300ms,-80@HT40-3 20s830ms,-79@HT40-4 35m3s770ms=tx-signal-strength=-75=tx-ccq=76=rx-ccq=33=distance=2=routeros-version=6.19=last-ip=172.18.116.81=tx-rate-set=BW:1x-2x SGI:2x HT:0-4,9-10=tdma-timing-offset=10=tdma-tx-size=496=tdma-rx-size=1008=tdma-retx=24=tdma-winfull=0";
+            //registration_respon_cleanup(registration_data);           
         }
-         private string resource_respon_cleanup(string resources)
+        /* private string resource_respon_cleanup(string resources)
          {
              int i = 0;
              int n = 0;
@@ -441,6 +448,139 @@ namespace Winbox_API_C_Sharp
             rb_resource_name_cmd.Parameters.AddWithValue("@tdma_winfull", SqlDbType.VarChar);
             rb_resource_name_cmd.Parameters["@tdma_winfull"].Value = output[31];
             rb_resource_name_cmd.ExecuteNonQuery();
+            return ("");
+        }
+*/
+        private string rb_wireless_data_cleanup(string rb_wireless_data)
+        {
+            int i = 0;
+            int n = 0;
+            int a = 0;
+            int temp0 = 0;
+            int inner_loop = 0;
+            int placeholder = 0;
+            string value1;
+            string[] resource_names = new string[100];
+            string[] resource_values = new string[100];
+            string[] output = new string[100];
+            char[] separator = { '=' };
+            //SqlConnection db_connection;
+            //db_connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB; AttachDbFilename=c:\users\keenan\documents\visual studio 2015\Projects\Winbox_API_C_Sharp\Winbox_API_C_Sharp\Winbox_API_DB.mdf; Integrated Security=True");
+            //db_connection.Open();
+            //SqlCommand rb_resource_name_cmd;
+            rb_wireless_data = rb_wireless_data.Remove(0, 37);
+            rb_wireless_data = rb_wireless_data.Remove(rb_wireless_data.IndexOf("configured"));
+            rb_wireless_data = rb_wireless_data.ToUpper();
+
+            for (int k = 0; k < rb_wireless_data.Length; k++)
+            {
+
+                if (rb_wireless_data[k] == '=')
+                {
+                    n++;
+                }
+                if (n == 2)
+                {
+                    value1 = rb_wireless_data.Substring(temp0, (k - temp0));
+                    string[] rb_resources = value1.Split('=');
+                    temp0 = k;
+                    n = 0;
+                    for (int loop = 0; loop < rb_resources.Length; loop++)
+                    {
+                        placeholder = 0;
+                        if (rb_resources[loop] != "")
+                        {
+                            if (inner_loop % 2 == 0)
+                            {
+                                resource_names[i] = rb_resources[loop];
+                                MessageBox.Show(resource_names[i]);
+                            }
+                            else
+                            {
+                                resource_values[i] = rb_resources[loop];
+                                placeholder = 1;
+                                resource_names[i] = rb_resources[loop];
+                                output[a] = resource_values[i];
+                                MessageBox.Show(output[a]);
+                                a++;
+                            }
+                            inner_loop++;
+                        }
+                        if (placeholder == 1)
+                        {
+                            i++;
+                        }
+                    }
+                }
+            }
+            /*rb_resource_name_cmd = new SqlCommand("INSERT INTO rb_registration_tbl (interface,radio_name,mac_address,ap,wds,bridge,rx_rate,tx_rate,packets,bytes,frames,frame_bytes,uptime,last_activity,signal_strength,signal_to_noise,signal_strength_ch0,signal_strength_ch1,tx_signal_strength_ch0,tx_signal_strength_ch1,strength_at_rates,tx_signal_strength,tx_ccq,rx_ccq,distance,router_os_version,last_ip,tx_rate_set,tdma_timing_offset,tdma_tx_size,tdma_rx_size,tdma_retx,tdma_winfull) VALUES (@interface,@radio_name,@mac_address,@ap,@wds,@bridge,@rx_rate,@tx_rate,@packets,@bytes,@frames,@frame_bytes,@uptime,@last_activity,@signal_strength,@signal_to_noise,@signal_strength_ch0,@signal_strength_ch1,@tx_signal_strength_ch0,@tx_signal_strength_ch1,@strength_at_rates,@tx_signal_strength,@tx_ccq,@rx_ccq,@distance,@router_os_version,@last_ip,@tx_rate_set,@tdma_timing_offset,@tdma_tx_size,@tdma_rx_size,@tdma_retx,@tdma_winfull )", db_connection);
+            rb_resource_name_cmd.Parameters.AddWithValue("@interface", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@interface"].Value = output[0];
+            rb_resource_name_cmd.Parameters.AddWithValue("@radio_name", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@radio_name"].Value = output[1];
+            rb_resource_name_cmd.Parameters.AddWithValue("@mac_address", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@mac_address"].Value = output[2];
+            rb_resource_name_cmd.Parameters.AddWithValue("@ap", SqlDbType.NVarChar);
+            rb_resource_name_cmd.Parameters["@ap"].Value = output[3];
+            rb_resource_name_cmd.Parameters.AddWithValue("@wds", SqlDbType.NVarChar);
+            rb_resource_name_cmd.Parameters["@wds"].Value = output[4];
+            rb_resource_name_cmd.Parameters.AddWithValue("@bridge", SqlDbType.NVarChar);
+            rb_resource_name_cmd.Parameters["@bridge"].Value = output[5];
+            rb_resource_name_cmd.Parameters.AddWithValue("@rx_rate", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@rx_rate"].Value = output[6];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tx_rate", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tx_rate"].Value = output[7];
+            rb_resource_name_cmd.Parameters.AddWithValue("@packets", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@packets"].Value = output[8];
+            rb_resource_name_cmd.Parameters.AddWithValue("@bytes", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@bytes"].Value = output[9];
+            rb_resource_name_cmd.Parameters.AddWithValue("@frames", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@frames"].Value = output[10];
+            rb_resource_name_cmd.Parameters.AddWithValue("@frame_bytes", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@frame_bytes"].Value = output[11];
+            rb_resource_name_cmd.Parameters.AddWithValue("@uptime", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@uptime"].Value = output[12];
+            rb_resource_name_cmd.Parameters.AddWithValue("@last_activity", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@last_activity"].Value = output[13];
+            rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@signal_strength"].Value = output[14];
+            rb_resource_name_cmd.Parameters.AddWithValue("@signal_to_noise", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@signal_to_noise"].Value = output[15];
+            rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength_ch0", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@signal_strength_ch0"].Value = output[16];
+            rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength_ch1", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@signal_strength_ch1"].Value = output[17];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength_ch0", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tx_signal_strength_ch0"].Value = output[18];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength_ch1", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tx_signal_strength_ch1"].Value = output[19];
+            rb_resource_name_cmd.Parameters.AddWithValue("@strength_at_rates", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@strength_at_rates"].Value = output[20];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tx_signal_strength"].Value = output[20];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tx_ccq", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tx_ccq"].Value = output[21];
+            rb_resource_name_cmd.Parameters.AddWithValue("@rx_ccq", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@rx_ccq"].Value = output[22];
+            rb_resource_name_cmd.Parameters.AddWithValue("@distance", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@distance"].Value = output[23];
+            rb_resource_name_cmd.Parameters.AddWithValue("@router_os_version", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@router_os_version"].Value = output[24];
+            rb_resource_name_cmd.Parameters.AddWithValue("@last_ip", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@last_ip"].Value = output[25];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tx_rate_set", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tx_rate_set"].Value = output[26];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_timing_offset", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tdma_timing_offset"].Value = output[27];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_tx_size", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tdma_tx_size"].Value = output[28];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_rx_size", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tdma_rx_size"].Value = output[29];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_retx", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tdma_retx"].Value = output[30];
+            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_winfull", SqlDbType.VarChar);
+            rb_resource_name_cmd.Parameters["@tdma_winfull"].Value = output[31];
+            rb_resource_name_cmd.ExecuteNonQuery();*/
             return ("");
         }
         private string command(string command)
