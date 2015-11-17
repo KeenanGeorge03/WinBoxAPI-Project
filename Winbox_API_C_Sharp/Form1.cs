@@ -248,7 +248,6 @@ namespace Winbox_API_C_Sharp
                  }
                  if (n == 2)
                  {
-                    resources = "uptime=4d15h20m38s=version=6.27=build-time=Feb/11/2015 13:24:13=free-memory=36741120=total-memory=67108864=cpu=MIPS 24Kc V7.4=cpu-count=1=cpu-frequency=400=cpu-load=28=free-hdd-space=116649984=total-hdd-space=134217728=write-sect-since-reboot=1070=write-sect-total=8926=bad-blocks=0=architecture-name=mipsbe=board-name=RB OmniTIK UPA-5HnD=platform=MikroTik";
                     value1 = resources.Substring(temp0, (k - temp0));
                      string[] rb_resources = value1.Split('=');
                      temp0 = k;
@@ -265,8 +264,7 @@ namespace Winbox_API_C_Sharp
                              else
                              {
                                  resource_values[i] = rb_resources[loop];
-                                 placeholder = 1;
-                                 resource_names[i] = rb_resources[loop];                                 
+                                 placeholder = 1;                                 
                                  output[a] = resource_values[i];
                                  a++;
                             }
