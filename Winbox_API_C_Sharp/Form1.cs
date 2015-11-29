@@ -11,6 +11,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Data.Sql;
 using System.Data.SqlClient;
+using MySql.Data.MySqlClient;
 
 namespace Winbox_API_C_Sharp
 {
@@ -227,7 +228,7 @@ namespace Winbox_API_C_Sharp
             //registration_table = command("/interface/wireless/registration-table/getall");  
             rb_registration_data = "!re.tag=sss=.id=*2=interface=Snake_AP1=radio-name=Gixxer->SnakeOmni=mac-address=4C:5E:0C:0F:2B:3B=ap=false=wds=false=bridge=false=rx-rate=26Mbps-20MHz/2S=tx-rate=60Mbps-40MHz/2S/SGI=packets=37184706,33176656=bytes=2871035632,2916519196=frames=33370529,16861527=frame-bytes=2887997970,2977703980=uptime=4d15h19m47s=last-activity=0ms=signal-strength=-76=signal-to-noise=40=signal-strength-ch0=-77=signal-strength-ch1=-82=tx-signal-strength-ch0=-81=tx-signal-strength-ch1=-76=strength-at-rates=-76@6Mbps 0ms,-75@HT20-0 27m45s620ms,-77@HT20-1 150ms,-76@HT20-2 780ms,-78@HT20-3 680ms,-78@HT20-4 890ms,-80@HT40-0 480ms,-80@HT40-1 290ms,-80@HT40-2 300ms,-80@HT40-3 20s830ms,-79@HT40-4 35m3s770ms=tx-signal-strength=-75=tx-ccq=76=rx-ccq=33=distance=2=routeros-version=6.19=last-ip=172.18.116.81=tx-rate-set=BW:1x-2x SGI:2x HT:0-4,9-10=tdma-timing-offset=10=tdma-tx-size=496=tdma-rx-size=1008=tdma-retx=24=tdma-winfull=0";
             registration_respon_cleanup(rb_registration_data);
-        } 
+        }
         private string rb_wireless_data_cleanup(string rb_wireless_data)
         {
             int i = 0;
@@ -243,208 +244,212 @@ namespace Winbox_API_C_Sharp
             string[] resource_values = new string[20];
             string[] output = new string[20];
             char[] separator = { '=' };
-            SqlConnection db_connection;
-            db_connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB; AttachDbFilename=c:\users\keenan\documents\visual studio 2015\Projects\Winbox_API_C_Sharp\Winbox_API_C_Sharp\Winbox_API_DB.mdf; Integrated Security=True");
-            db_connection.Open();
-            SqlCommand rb_resource_name_cmd;
-            rb_wireless_data = rb_wireless_data.Remove(0, 37);
-            rb_wireless_data = rb_wireless_data.Replace("==", "=");
-            rb_wireless_data = rb_wireless_data.Replace("area=frequency-mode", "area_frequency-mode");
-            rb_wireless_data = rb_wireless_data.Remove(rb_wireless_data.IndexOf("configured"));
-            rb_wireless_data = rb_wireless_data.ToUpper();
-            for (int k = 0; k < rb_wireless_data.Length; k++)
+            string server = "journeyatrest.com";
+            string database = "george";
+            string uid = "keenangeorge";
+            string password = "C1JSkScZ4gWkLTTvWQm4";
+            string connection;
+            connection = ("SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";");
+            //db_connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB; AttachDbFilename=c:\users\keenan\documents\visual studio 2015\Projects\Winbox_API_C_Sharp\Winbox_API_C_Sharp\Winbox_API_DB.mdf; Integrated Security=True");
+            MySqlConnection db_connection = null;
+            try
             {
+                db_connection = new MySqlConnection(connection);
+                db_connection.Open();
+            }
+            catch (MySqlException error)
+            {
+                MessageBox.Show(Convert.ToString(error));
+            }
+            if (db_connection != null)
+            {
+                
 
-                if (rb_wireless_data[k] == '=')
+                rb_wireless_data = rb_wireless_data.Remove(0, 37);
+                rb_wireless_data = rb_wireless_data.Replace("==", "=");
+                rb_wireless_data = rb_wireless_data.Replace("area=frequency-mode", "area_frequency-mode");
+                rb_wireless_data = rb_wireless_data.Remove(rb_wireless_data.IndexOf("configured"));
+                rb_wireless_data = rb_wireless_data.ToUpper();
+                for (int k = 0; k < rb_wireless_data.Length; k++)
                 {
-                    n++;
-                }
-                if (n == 2)
-                {
-                    value1 = rb_wireless_data.Substring(temp0, (k - temp0));
-                    string[] rb_resources = value1.Split('=');
-                    temp0 = k;
-                    n = 0;
-                    for (int loop = 0; loop < rb_resources.Length; loop++)
+
+                    if (rb_wireless_data[k] == '=')
                     {
-                        placeholder = 0;
-                        if (rb_resources[loop] != "")
+                        n++;
+                    }
+                    if (n == 2)
+                    {
+                        value1 = rb_wireless_data.Substring(temp0, (k - temp0));
+                        string[] rb_resources = value1.Split('=');
+                        temp0 = k;
+                        n = 0;
+                        for (int loop = 0; loop < rb_resources.Length; loop++)
                         {
-                            if (inner_loop % 2 == 0)
+                            placeholder = 0;
+                            if (rb_resources[loop] != "")
                             {
-                                resource_names[i] = rb_resources[loop];
-                                if(resource_names[i] == "MAC-ADDRESS")
+                                if (inner_loop % 2 == 0)
                                 {
-                                    mac_save = 1;
-                                    MessageBox.Show(resource_names[i]);
+                                    resource_names[i] = rb_resources[loop];
+                                    if (resource_names[i] == "MAC-ADDRESS")
+                                    {
+                                        mac_save = 1;
+                                    }
                                 }
+                                else
+                                {
+                                    resource_values[i] = rb_resources[loop];
+                                    if (mac_save == 1)
+                                    {
+                                        rb_mac_address = resource_values[i];
+                                        mac_save = 0;
+                                    }
+                                    placeholder = 1;
+                                    output[a] = resource_values[i];
+                                    a++;
+                                }
+                                inner_loop++;
                             }
-                            else
+                            if (placeholder == 1)
                             {
-                                resource_values[i] = rb_resources[loop];
-                                if(mac_save == 1)
-                                {
-                                    rb_mac_address = resource_values[i];
-                                    mac_save = 0;
-                                    MessageBox.Show(rb_mac_address);
-                                }
-                                placeholder = 1;
-                                output[a] = resource_values[i];
-                                a++;
+                                i++;
                             }
-                            inner_loop++;
-                        }
-                        if (placeholder == 1)
-                        {
-                            i++;
-                        }
 
 
+                        }
                     }
                 }
+                string cmdText = ("INSERT INTO rb_identity_tbl (rb_name,mtu,l2mtu,rb_mac_address,arp,disable_running_check,interface_type,radio_name,mode,ssid,frequency_mode,country,antenna_gain,frequency,band,channel_width,scan_list,wireless_protocol,date_time) VALUES (@rb_name,@mtu,@l2mtu,@rb_mac_address,@arp,@disable_running_check,@interface_type,@radio_name,@mode,@ssid,@frequency_mode,@country,@antenna_gain,@frequency,@band,@channel_width,@scan_list,@wireless_protocol,@date_time)");
+                MySqlCommand rb_resource_name_cmd = new MySqlCommand(cmdText, db_connection);
+                rb_resource_name_cmd.Prepare();
+                rb_resource_name_cmd.Parameters.AddWithValue("@rb_name", output[0]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@mtu", output[1]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@l2mtu", output[2]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@rb_mac_address", output[3]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@arp", output[4]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@disable_running_check", output[5]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@interface_type", output[6]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@radio_name", output[7]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@mode", output[8]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@ssid", output[9]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@frequency_mode", output[10]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@country", output[11]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@antenna_gain", output[12]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@frequency", output[13]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@band", output[14]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@channel_width", output[15]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@scan_list", output[16]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@wireless_protocol", output[17]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@date_time", localdate);
+                rb_resource_name_cmd.ExecuteNonQuery();             
             }
-                rb_resource_name_cmd = new SqlCommand("INSERT INTO rb_identity_tbl (rb_name,mtu,l2mtu,rb_mac_address,arp,disable_running_check,interface_type,radio_name,mode,ssid,frequency_mode,country,antenna_gain,frequency,band,channel_width,scan_list,wireless_protocol,date_time) VALUES (@rb_name,@mtu,@l2mtu,@rb_mac_address,@arp,@disable_running_check,@interface_type,@radio_name,@mode,@ssid,@frequency_mode,@country,@antenna_gain,@frequency,@band,@channel_width,@scan_list,@wireless_protocol,@date_time)", db_connection);
-                rb_resource_name_cmd.Parameters.AddWithValue("@rb_name", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@rb_name"].Value = output[0];
-                rb_resource_name_cmd.Parameters.AddWithValue("@mtu", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@mtu"].Value = output[1];
-                rb_resource_name_cmd.Parameters.AddWithValue("@l2mtu", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@l2mtu"].Value = output[2];
-                rb_resource_name_cmd.Parameters.AddWithValue("@rb_mac_address", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@rb_mac_address"].Value = output[3];
-                rb_resource_name_cmd.Parameters.AddWithValue("@arp", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@arp"].Value = output[4];
-                rb_resource_name_cmd.Parameters.AddWithValue("@disable_running_check", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@disable_running_check"].Value = output[5];
-                rb_resource_name_cmd.Parameters.AddWithValue("@interface_type", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@interface_type"].Value = output[6];
-                rb_resource_name_cmd.Parameters.AddWithValue("@radio_name", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@radio_name"].Value = output[7];
-                rb_resource_name_cmd.Parameters.AddWithValue("@mode", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@mode"].Value = output[8];
-                rb_resource_name_cmd.Parameters.AddWithValue("@ssid", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@ssid"].Value = output[9];
-                rb_resource_name_cmd.Parameters.AddWithValue("@frequency_mode", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@frequency_mode"].Value = output[10];
-                rb_resource_name_cmd.Parameters.AddWithValue("@country", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@country"].Value = output[11];
-                rb_resource_name_cmd.Parameters.AddWithValue("@antenna_gain", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@antenna_gain"].Value = output[12];
-                rb_resource_name_cmd.Parameters.AddWithValue("@frequency", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@frequency"].Value = output[13];
-                rb_resource_name_cmd.Parameters.AddWithValue("@band", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@band"].Value = output[14];
-                rb_resource_name_cmd.Parameters.AddWithValue("@channel_width", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@channel_width"].Value = output[15];
-                rb_resource_name_cmd.Parameters.AddWithValue("@scan_list", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@scan_list"].Value = output[16];
-                rb_resource_name_cmd.Parameters.AddWithValue("@wireless_protocol", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@wireless_protocol"].Value = output[17];
-                rb_resource_name_cmd.Parameters.AddWithValue("@date_time", SqlDbType.VarChar);
-                rb_resource_name_cmd.Parameters["@date_time"].Value = localdate;
-                rb_resource_name_cmd.ExecuteNonQuery();
-
             return "";
         }
         private string resource_respon_cleanup(string resources)
-         {
-             int i = 0;
-             int n = 0;
-             int a = 0;
-             int temp0 = 0;
-             int inner_loop = 0;
-             int placeholder = 0;
-             string value1;
-             DateTime localdate = DateTime.Now;
-             string[] resource_names = new string[50];
-             string[] resource_values = new string[50];
-             string[] output = new string[16];
-             char[] separator = { '=' };
-             SqlConnection db_connection;
-             db_connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB; AttachDbFilename=c:\users\keenan\documents\visual studio 2015\Projects\Winbox_API_C_Sharp\Winbox_API_C_Sharp\Winbox_API_DB.mdf; Integrated Security=True");
-             db_connection.Open();
-             SqlCommand rb_resource_name_cmd;
-             resources = resources.Remove(0, 12);
-             resources = resources.ToUpper();
-             for (int k = 0; k < resources.Length; k++)
-             {
+        {
+            int i = 0;
+            int n = 0;
+            int a = 0;
+            int temp0 = 0;
+            int inner_loop = 0;
+            int placeholder = 0;
+            string value1;
+            DateTime localdate = DateTime.Now;
+            string[] resource_names = new string[50];
+            string[] resource_values = new string[50];
+            string[] output = new string[33];
+            char[] separator = { '=' };
+            string server = "journeyatrest.com";
+            string database = "george";
+            string uid = "keenangeorge";
+            string password = "C1JSkScZ4gWkLTTvWQm4";
+            string connection;
+            connection = ("SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";");
+            //To connect to Microsoft DB.
+            //db_connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB; AttachDbFilename=c:\users\keenan\documents\visual studio 2015\Projects\Winbox_API_C_Sharp\Winbox_API_C_Sharp\Winbox_API_DB.mdf; Integrated Security=True");
 
-                 if (resources[k] == '=')
-                 {
-                     n++;
-                 }
-                 if (n == 2)
-                 {
-                    value1 = resources.Substring(temp0, (k - temp0));
-                     string[] rb_resources = value1.Split('=');
-                     temp0 = k;
-                     n = 0;
-                     for (int loop = 0; loop < rb_resources.Length; loop++)
-                     {
-                         placeholder = 0;
-                         if (rb_resources[loop] != "")
-                         {
-                             if (inner_loop % 2 == 0)
-                             {
-                                 resource_names[i] = rb_resources[loop];
-                             }
-                             else
-                             {
-                                 resource_values[i] = rb_resources[loop];
-                                 placeholder = 1;                                 
-                                 output[a] = resource_values[i];
-                                 a++;
+            MySqlConnection db_connection = null;
+            try
+            {
+                db_connection = new MySqlConnection(connection);
+                db_connection.Open();
+            }
+            catch (MySqlException error)
+            {
+                MessageBox.Show(Convert.ToString(error));
+            }
+            if (db_connection != null)
+            {
+                resources = resources.Remove(0, 12);
+                resources = resources.ToUpper();
+                for (int k = 0; k < resources.Length; k++)
+                {
+
+                    if (resources[k] == '=')
+                    {
+                        n++;
+                    }
+                    if (n == 2)
+                    {
+                        value1 = resources.Substring(temp0, (k - temp0));
+                        string[] rb_resources = value1.Split('=');
+                        temp0 = k;
+                        n = 0;
+                        for (int loop = 0; loop < rb_resources.Length; loop++)
+                        {
+                            placeholder = 0;
+                            if (rb_resources[loop] != "")
+                            {
+                                if (inner_loop % 2 == 0)
+                                {
+                                    resource_names[i] = rb_resources[loop];
+                                }
+                                else
+                                {
+                                    resource_values[i] = rb_resources[loop];
+                                    placeholder = 1;
+                                    output[a] = resource_values[i];
+                                    a++;
+                                }
+                                inner_loop++;
                             }
-                             inner_loop++;
-                         }
-                         if (placeholder == 1)
-                         {
-                             i++;
-                         }
-                     }
-                 }
-             }              
-                            rb_resource_name_cmd = new SqlCommand("INSERT INTO rb_resources_tbl (uptime,version,build_time,free_memory,total_memory,cpu_mips,cpu_count,cpu_freq,cpu_load,free_hdd_space,total_hdd_space,write_sect_since_reboot,write_sect_total,bad_blocks,architecture_name,board_name,rb_mac_address,date_time) VALUES (@uptime,@version,@build_time,@free_memory,@total_memory,@cpu_mips,@cpu_count,@cpu_freq,@cpu_load,@free_hdd_space,@total_hdd_space,@write_sect_since_reboot,@write_sect_total,@bad_blocks,@architecture_name,@board_name,@rb_mac_address,@date_time )", db_connection);
-                            rb_resource_name_cmd.Parameters.AddWithValue("@uptime", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@uptime"].Value = output[0];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@version", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@version"].Value = output[1];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@build_time", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@build_time"].Value = output[2];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@free_memory", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@free_memory"].Value = output[3];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@total_memory", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@total_memory"].Value = output[4];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@cpu_mips", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@cpu_mips"].Value = output[5];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@cpu_count", SqlDbType.Int);
-                            rb_resource_name_cmd.Parameters["@cpu_count"].Value = output[6];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@cpu_freq", SqlDbType.Int);
-                            rb_resource_name_cmd.Parameters["@cpu_freq"].Value = output[7];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@cpu_load", SqlDbType.Int);
-                            rb_resource_name_cmd.Parameters["@cpu_load"].Value = output[8];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@free_hdd_space", SqlDbType.Int);
-                            rb_resource_name_cmd.Parameters["@free_hdd_space"].Value = output[9];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@total_hdd_space", SqlDbType.Int);
-                            rb_resource_name_cmd.Parameters["@total_hdd_space"].Value = output[10];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@write_sect_since_reboot", SqlDbType.Int);
-                            rb_resource_name_cmd.Parameters["@write_sect_since_reboot"].Value = output[11];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@write_sect_total", SqlDbType.Int);
-                            rb_resource_name_cmd.Parameters["@write_sect_total"].Value = output[12];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@bad_blocks", SqlDbType.Int);
-                            rb_resource_name_cmd.Parameters["@bad_blocks"].Value = output[13];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@architecture_name", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@architecture_name"].Value = output[14];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@board_name", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@board_name"].Value = output[15];
-                            rb_resource_name_cmd.Parameters.AddWithValue("@rb_mac_address", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@rb_mac_address"].Value = rb_mac_address;
-                            rb_resource_name_cmd.Parameters.AddWithValue("@date_time", SqlDbType.VarChar);
-                            rb_resource_name_cmd.Parameters["@date_time"].Value = localdate;
-                            rb_resource_name_cmd.ExecuteNonQuery();       
-            return "";
+                            if (placeholder == 1)
+                            {
+                                i++;
+                            }
+                        }
+                    }
+                }
 
-         }
+                string cmdText = ("INSERT INTO rb_resources_tbl (uptime,version,build_time,free_memory,total_memory,cpu_mips,cpu_count,cpu_freq,cpu_load,free_hdd_space,total_hdd_space,write_sect_since_reboot,write_sect_total,bad_blocks,architecture_name,board_name,rb_mac_address,date_time) VALUES (@uptime,@version,@build_time,@free_memory,@total_memory,@cpu_mips,@cpu_count,@cpu_freq,@cpu_load,@free_hdd_space,@total_hdd_space,@write_sect_since_reboot,@write_sect_total,@bad_blocks,@architecture_name,@board_name,@rb_mac_address,@date_time )");
+                MySqlCommand rb_resource_name_cmd = new MySqlCommand(cmdText, db_connection);
+                rb_resource_name_cmd.Parameters.AddWithValue("@uptime", output[0]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@version", output[1]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@build_time", output[2]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@free_memory", output[3]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@total_memory", output[4]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@cpu_mips", output[5]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@cpu_count", output[6]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@cpu_freq", output[7]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@cpu_load", output[8]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@free_hdd_space", output[9]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@total_hdd_space", output[10]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@write_sect_since_reboot", output[11]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@write_sect_total", output[12]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@bad_blocks", output[13]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@architecture_name", output[14]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@board_name", output[15]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@rb_mac_address", rb_mac_address);                
+                rb_resource_name_cmd.Parameters.AddWithValue("@date_time", localdate);
+                rb_resource_name_cmd.ExecuteNonQuery();
+                   // catch (MySqlException error)
+               // {
+                   // MessageBox.Show(Convert.ToString(error));
+               // }
+            }       
+            return "";
+        }
+       
         private string registration_respon_cleanup(string rb_registration_data)
         {
             int i = 0;
@@ -459,121 +464,105 @@ namespace Winbox_API_C_Sharp
             string[] resource_values = new string[50];
             string[] output = new string[34];
             char[] separator = { '=' };
-            SqlConnection db_connection;
-            db_connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB; AttachDbFilename=c:\users\keenan\documents\visual studio 2015\Projects\Winbox_API_C_Sharp\Winbox_API_C_Sharp\Winbox_API_DB.mdf; Integrated Security=True");
-            db_connection.Open();
-            SqlCommand rb_resource_name_cmd;
-            rb_registration_data = rb_registration_data.Remove(0, 19);
-            rb_registration_data = rb_registration_data.ToUpper();
-            MessageBox.Show(rb_registration_data);
-            for (int k = 0; k < rb_registration_data.Length; k++)
-            {
+            string server = "journeyatrest.com";
+            string database = "george";
+            string uid = "keenangeorge";
+            string password = "C1JSkScZ4gWkLTTvWQm4";
+            string connection;
+            connection = ("SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";");
+            //To connect to Microsoft DB.
+            //db_connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB; AttachDbFilename=c:\users\keenan\documents\visual studio 2015\Projects\Winbox_API_C_Sharp\Winbox_API_C_Sharp\Winbox_API_DB.mdf; Integrated Security=True");
 
-                if (rb_registration_data[k] == '=')
+            MySqlConnection db_connection = null;
+            try
+            {
+                db_connection = new MySqlConnection(connection);
+                db_connection.Open();
+            }
+            catch (MySqlException error)
+            {
+                MessageBox.Show(Convert.ToString(error));
+            }
+            if (db_connection != null)
+            {
+                rb_registration_data = rb_registration_data.Remove(0, 19);
+                rb_registration_data = rb_registration_data.ToUpper();
+                for (int k = 0; k < rb_registration_data.Length; k++)
                 {
-                    n++;
-                }
-                if (n == 2)
-                {
-                    value1 = rb_registration_data.Substring(temp0, (k - temp0));
-                    string[] rb_resources = value1.Split('=');
-                    temp0 = k;
-                    n = 0;
-                    for (int loop = 0; loop < rb_resources.Length; loop++)
+
+                    if (rb_registration_data[k] == '=')
                     {
-                        placeholder = 0;
-                        if (rb_resources[loop] != "")
+                        n++;
+                    }
+                    if (n == 2)
+                    {
+                        value1 = rb_registration_data.Substring(temp0, (k - temp0));
+                        string[] rb_resources = value1.Split('=');
+                        temp0 = k;
+                        n = 0;
+                        for (int loop = 0; loop < rb_resources.Length; loop++)
                         {
-                            if (inner_loop % 2 == 0)
+                            placeholder = 0;
+                            if (rb_resources[loop] != "")
                             {
-                                resource_names[i] = rb_resources[loop];
+                                if (inner_loop % 2 == 0)
+                                {
+                                    resource_names[i] = rb_resources[loop];
+                                }
+                                else
+                                {
+                                    resource_values[i] = rb_resources[loop];
+                                    placeholder = 1;
+                                    output[a] = resource_values[i];
+                                    a++;
+                                }
+                                inner_loop++;
                             }
-                            else
+                            if (placeholder == 1)
                             {
-                                resource_values[i] = rb_resources[loop];
-                                placeholder = 1;
-                                output[a] = resource_values[i];
-                                a++;
+                                i++;
                             }
-                            inner_loop++;
-                        }
-                        if (placeholder == 1)
-                        {
-                            i++;
                         }
                     }
                 }
+                string cmdText = ("INSERT INTO rb_registration_tbl (interface,radio_name,mac_address,ap,wds,bridge,rx_rate,tx_rate,packets,bytes,frames,frame_bytes,uptime,last_activity,signal_strength,signal_to_noise,signal_strength_ch0,signal_strength_ch1,tx_signal_strength_ch0,tx_signal_strength_ch1,strength_at_rates,tx_signal_strength,tx_ccq,rx_ccq,distance,router_os_version,last_ip,tx_rate_set,tdma_timing_offset,tdma_tx_size,tdma_rx_size,tdma_retx,rb_mac_address,date_time) VALUES (@interface,@radio_name,@mac_address,@ap,@wds,@bridge,@rx_rate,@tx_rate,@packets,@bytes,@frames,@frame_bytes,@uptime,@last_activity,@signal_strength,@signal_to_noise,@signal_strength_ch0,@signal_strength_ch1,@tx_signal_strength_ch0,@tx_signal_strength_ch1,@strength_at_rates,@tx_signal_strength,@tx_ccq,@rx_ccq,@distance,@router_os_version,@last_ip,@tx_rate_set,@tdma_timing_offset,@tdma_tx_size,@tdma_rx_size,@tdma_retx,@rb_mac_address,@date_time )");
+                MySqlCommand rb_resource_name_cmd = new MySqlCommand(cmdText, db_connection);
+                rb_resource_name_cmd.Parameters.AddWithValue("@interface", output[0]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@radio_name", output[1]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@mac_address", output[2]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@ap", output[3]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@wds", output[4]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@bridge", output[5]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@rx_rate", output[6]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tx_rate", output[7]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@packets", output[8]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@bytes", output[9]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@frames", output[10]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@frame_bytes", output[11]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@uptime", output[12]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@last_activity", output[13]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength", output[14]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@signal_to_noise", output[15]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength_ch0", output[16]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength_ch1", output[17]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength_ch0", output[18]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength_ch1", output[19]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@strength_at_rates", output[20]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength", output[21]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tx_ccq", output[22]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@rx_ccq", output[23]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@distance", output[24]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@router_os_version", output[25]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@last_ip", output[26]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tx_rate_set", output[27]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tdma_timing_offset", output[28]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tdma_tx_size", output[29]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tdma_rx_size", output[30]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@tdma_retx", output[31]);
+                rb_resource_name_cmd.Parameters.AddWithValue("@rb_mac_address", rb_mac_address);
+                rb_resource_name_cmd.Parameters.AddWithValue("@date_time", localdate);
+                rb_resource_name_cmd.ExecuteNonQuery();
             }
-            rb_resource_name_cmd = new SqlCommand("INSERT INTO rb_registration_tbl (interface,radio_name,mac_address,ap,wds,bridge,rx_rate,tx_rate,packets,bytes,frames,frame_bytes,uptime,last_activity,signal_strength,signal_to_noise,signal_strength_ch0,signal_strength_ch1,tx_signal_strength_ch0,tx_signal_strength_ch1,strength_at_rates,tx_signal_strength,tx_ccq,rx_ccq,distance,router_os_version,last_ip,tx_rate_set,tdma_timing_offset,tdma_tx_size,tdma_rx_size,tdma_retx,rb_mac_address,date_time) VALUES (@interface,@radio_name,@mac_address,@ap,@wds,@bridge,@rx_rate,@tx_rate,@packets,@bytes,@frames,@frame_bytes,@uptime,@last_activity,@signal_strength,@signal_to_noise,@signal_strength_ch0,@signal_strength_ch1,@tx_signal_strength_ch0,@tx_signal_strength_ch1,@strength_at_rates,@tx_signal_strength,@tx_ccq,@rx_ccq,@distance,@router_os_version,@last_ip,@tx_rate_set,@tdma_timing_offset,@tdma_tx_size,@tdma_rx_size,@tdma_retx,@rb_mac_address,@date_time )", db_connection);
-            rb_resource_name_cmd.Parameters.AddWithValue("@interface", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@interface"].Value = output[0];
-            rb_resource_name_cmd.Parameters.AddWithValue("@radio_name", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@radio_name"].Value = output[1];
-            rb_resource_name_cmd.Parameters.AddWithValue("@mac_address", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@mac_address"].Value = output[2];
-            rb_resource_name_cmd.Parameters.AddWithValue("@ap", SqlDbType.NVarChar);
-            rb_resource_name_cmd.Parameters["@ap"].Value = output[3];
-            rb_resource_name_cmd.Parameters.AddWithValue("@wds", SqlDbType.NVarChar);
-            rb_resource_name_cmd.Parameters["@wds"].Value = output[4];
-            rb_resource_name_cmd.Parameters.AddWithValue("@bridge", SqlDbType.NVarChar);
-            rb_resource_name_cmd.Parameters["@bridge"].Value = output[5];
-            rb_resource_name_cmd.Parameters.AddWithValue("@rx_rate", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@rx_rate"].Value = output[6];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tx_rate", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tx_rate"].Value = output[7];
-            rb_resource_name_cmd.Parameters.AddWithValue("@packets", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@packets"].Value = output[8];
-            rb_resource_name_cmd.Parameters.AddWithValue("@bytes", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@bytes"].Value = output[9];
-            rb_resource_name_cmd.Parameters.AddWithValue("@frames", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@frames"].Value = output[10];
-            rb_resource_name_cmd.Parameters.AddWithValue("@frame_bytes", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@frame_bytes"].Value = output[11];
-            rb_resource_name_cmd.Parameters.AddWithValue("@uptime", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@uptime"].Value = output[12];
-            rb_resource_name_cmd.Parameters.AddWithValue("@last_activity", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@last_activity"].Value = output[13];
-            rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@signal_strength"].Value = output[14];
-            rb_resource_name_cmd.Parameters.AddWithValue("@signal_to_noise", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@signal_to_noise"].Value = output[15];
-            rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength_ch0", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@signal_strength_ch0"].Value = output[16];
-            rb_resource_name_cmd.Parameters.AddWithValue("@signal_strength_ch1", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@signal_strength_ch1"].Value = output[17];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength_ch0", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tx_signal_strength_ch0"].Value = output[18];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength_ch1", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tx_signal_strength_ch1"].Value = output[19];
-            rb_resource_name_cmd.Parameters.AddWithValue("@strength_at_rates", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@strength_at_rates"].Value = output[20];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tx_signal_strength", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tx_signal_strength"].Value = output[21];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tx_ccq", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tx_ccq"].Value = output[22];
-            rb_resource_name_cmd.Parameters.AddWithValue("@rx_ccq", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@rx_ccq"].Value = output[23];
-            rb_resource_name_cmd.Parameters.AddWithValue("@distance", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@distance"].Value = output[24];
-            rb_resource_name_cmd.Parameters.AddWithValue("@router_os_version", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@router_os_version"].Value = output[25];
-            rb_resource_name_cmd.Parameters.AddWithValue("@last_ip", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@last_ip"].Value = output[26];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tx_rate_set", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tx_rate_set"].Value = output[27];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_timing_offset", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tdma_timing_offset"].Value = output[28];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_tx_size", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tdma_tx_size"].Value = output[29];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_rx_size", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tdma_rx_size"].Value = output[30];
-            rb_resource_name_cmd.Parameters.AddWithValue("@tdma_retx", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@tdma_retx"].Value = output[31];
-            rb_resource_name_cmd.Parameters.AddWithValue("@rb_mac_address", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@rb_mac_address"].Value = rb_mac_address;
-            rb_resource_name_cmd.Parameters.AddWithValue("@date_time", SqlDbType.VarChar);
-            rb_resource_name_cmd.Parameters["@date_time"].Value = localdate;
-            rb_resource_name_cmd.ExecuteNonQuery();
             return ("");
         }
         private string command(string command)
