@@ -18,12 +18,14 @@ namespace Winbox_API_C_Sharp
     public partial class Form1 : Form
     {
         private string rb_mac_address;
+        
         class MK
         {
+            
             Stream connection;
             TcpClient con;
 
-            public MK(string ip = "172.18.112.237")
+            public MK(string ip)
             {
                 con = new TcpClient();
                 con.Connect(ip, 8728);
@@ -209,25 +211,39 @@ namespace Winbox_API_C_Sharp
         {
             InitializeComponent();
         }
-
-        private void button1_Click(object sender, EventArgs e)
+        private string routerboard_definition(string routerboard)
         {
             string[,] resource_input = new string[2, 0];
             string resources;
             string rb_registration_data;
             string rb_wireless_data;
 
-            //rb_wireless_data = command("/interface/wireless/print");
-            rb_wireless_data = ("!re.tag=sss=.id=*6=default-name=wlan1=name=Snake_AP1=mtu=1500=l2mtu=1600=mac-address=4C:5E:0C:AF:58:0F=arp=enabled=disable-running-check=false=interface-type=Atheros AR92xx=radio-name=Snake_AP1=mode=ap-bridge=ssid=http:\\ctwug.za.netSnake_AP1=area==frequency-mode=superchannel=country=ireland=antenna-gain=0=frequency=5475=band=5ghz-onlyn=channel-width=20/40mhz-Ce=scan-list=default,5400-5500=wireless-protocol=nv2=rate-set=configured=supported-rates-a/g==basic-rates-a/g==max-station-count=2007=distance=dynamic=tx-power-mode=default=noise-floor-threshold=default=nv2-noise-floor-offset=default=dfs-mode=none=vlan-mode=no-tag=vlan-id=1=wds-mode=disabled=wds-default-bridge=none=wds-default-cost=100=wds-cost-range=50-150=wds-ignore-ssid=false=update-stats-interval=disabled=bridge-mode=enabled=default-authentication=true=default-forwarding=true=default-ap-tx-limit=0=default-client-tx-limit=0=proprietary-extensions=post-2.9.25=wmm-support=disabled=hide-ssid=false=security-profile=default=interworking-profile=disabled=disconnect-timeout=3s=on-fail-retry-time=100ms=preamble-mode=both=compression=false=allow-sharedkey=false=station-bridge-clone-mac=00:00:00:00:00:00=ampdu-priorities=0=guard-interval=any=ht-supported-mcs=mcs-0,mcs-1,mcs-2,mcs-3,mcs-4,mcs-9,mcs-10,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23=ht-basic-mcs=mcs-0,mcs-1,mcs-2,mcs-3,mcs-4,mcs-9,mcs-10=tx-chains=0,1=rx-chains=0,1=amsdu-limit=8192=amsdu-threshold=8192=tdma-period-size=2=nv2-queue-count=2=nv2-qos=default=nv2-cell-radius=10=nv2-security=disabled=nv2-preshared-key==hw-retries=7=frame-lifetime=0=adaptive-noise-immunity=none=hw-fragmentation-threshold=disabled=hw-protection-mode=none=hw-protection-threshold=0=frequency-offset=0=rate-selection=advanced=multicast-helper=default=multicast-buffering=enabled=keepalive-frames=enabled=running=true=disabled=false=comment=client;512;!done.tag=sss");
-            rb_wireless_data_cleanup(rb_wireless_data);
+            string[] rb_ip_addresses = new string[10];
+            string rb1 = "172.18.112.235";
+            string rb2 = "172.18.112.237";
+            string rb3 = "172.18.112.250";
+            string rb4 = "172.18.112.252";
+            string rb5 = "172.18.112.253";
 
-            //resources = command("/system/resource/print");       
-            resources = "!re.tag=sss=uptime=4d15h20m38s=version=6.27=build-time=Feb/11/2015 13:24:13=free-memory=36741120=total-memory=67108864=cpu=MIPS 24Kc V7.4=cpu-count=1=cpu-frequency=400=cpu-load=28=free-hdd-space=116649984=total-hdd-space=134217728=write-sect-since-reboot=1070=write-sect-total=8926=bad-blocks=0=architecture-name=mipsbe=board-name=RB OmniTIK UPA-5HnD=platform=MikroTik";
-            resource_respon_cleanup(resources);
+            rb_ip_addresses[0] = rb1;
+            rb_ip_addresses[1] = rb2;
+            rb_ip_addresses[2] = rb3;
+            rb_ip_addresses[3] = rb4;
+            rb_ip_addresses[4] = rb5;
 
-            //registration_table = command("/interface/wireless/registration-table/getall");  
-            rb_registration_data = "!re.tag=sss=.id=*2=interface=Snake_AP1=radio-name=Gixxer->SnakeOmni=mac-address=4C:5E:0C:0F:2B:3B=ap=false=wds=false=bridge=false=rx-rate=26Mbps-20MHz/2S=tx-rate=60Mbps-40MHz/2S/SGI=packets=37184706,33176656=bytes=2871035632,2916519196=frames=33370529,16861527=frame-bytes=2887997970,2977703980=uptime=4d15h19m47s=last-activity=0ms=signal-strength=-76=signal-to-noise=40=signal-strength-ch0=-77=signal-strength-ch1=-82=tx-signal-strength-ch0=-81=tx-signal-strength-ch1=-76=strength-at-rates=-76@6Mbps 0ms,-75@HT20-0 27m45s620ms,-77@HT20-1 150ms,-76@HT20-2 780ms,-78@HT20-3 680ms,-78@HT20-4 890ms,-80@HT40-0 480ms,-80@HT40-1 290ms,-80@HT40-2 300ms,-80@HT40-3 20s830ms,-79@HT40-4 35m3s770ms=tx-signal-strength=-75=tx-ccq=76=rx-ccq=33=distance=2=routeros-version=6.19=last-ip=172.18.116.81=tx-rate-set=BW:1x-2x SGI:2x HT:0-4,9-10=tdma-timing-offset=10=tdma-tx-size=496=tdma-rx-size=1008=tdma-retx=24=tdma-winfull=0";
-            registration_respon_cleanup(rb_registration_data);
+            for (int loop = 0; loop < rb_ip_addresses.Length; loop++)
+            {
+                rb_wireless_data = command("/interface/wireless/print", rb_ip_addresses[loop]);
+                //rb_wireless_data = ("!re.tag=sss=.id=*6=default-name=wlan1=name=Snake_AP1=mtu=1500=l2mtu=1600=mac-address=4C:5E:0C:AF:58:0F=arp=enabled=disable-running-check=false=interface-type=Atheros AR92xx=radio-name=Snake_AP1=mode=ap-bridge=ssid=http:\\ctwug.za.netSnake_AP1=area==frequency-mode=superchannel=country=ireland=antenna-gain=0=frequency=5475=band=5ghz-onlyn=channel-width=20/40mhz-Ce=scan-list=default,5400-5500=wireless-protocol=nv2=rate-set=configured=supported-rates-a/g==basic-rates-a/g==max-station-count=2007=distance=dynamic=tx-power-mode=default=noise-floor-threshold=default=nv2-noise-floor-offset=default=dfs-mode=none=vlan-mode=no-tag=vlan-id=1=wds-mode=disabled=wds-default-bridge=none=wds-default-cost=100=wds-cost-range=50-150=wds-ignore-ssid=false=update-stats-interval=disabled=bridge-mode=enabled=default-authentication=true=default-forwarding=true=default-ap-tx-limit=0=default-client-tx-limit=0=proprietary-extensions=post-2.9.25=wmm-support=disabled=hide-ssid=false=security-profile=default=interworking-profile=disabled=disconnect-timeout=3s=on-fail-retry-time=100ms=preamble-mode=both=compression=false=allow-sharedkey=false=station-bridge-clone-mac=00:00:00:00:00:00=ampdu-priorities=0=guard-interval=any=ht-supported-mcs=mcs-0,mcs-1,mcs-2,mcs-3,mcs-4,mcs-9,mcs-10,mcs-16,mcs-17,mcs-18,mcs-19,mcs-20,mcs-21,mcs-22,mcs-23=ht-basic-mcs=mcs-0,mcs-1,mcs-2,mcs-3,mcs-4,mcs-9,mcs-10=tx-chains=0,1=rx-chains=0,1=amsdu-limit=8192=amsdu-threshold=8192=tdma-period-size=2=nv2-queue-count=2=nv2-qos=default=nv2-cell-radius=10=nv2-security=disabled=nv2-preshared-key==hw-retries=7=frame-lifetime=0=adaptive-noise-immunity=none=hw-fragmentation-threshold=disabled=hw-protection-mode=none=hw-protection-threshold=0=frequency-offset=0=rate-selection=advanced=multicast-helper=default=multicast-buffering=enabled=keepalive-frames=enabled=running=true=disabled=false=comment=client;512;!done.tag=sss");
+                rb_wireless_data_cleanup(rb_wireless_data);
+                resources = command("/system/resource/print", rb_ip_addresses[loop]);
+                //resources = "!re.tag=sss=uptime=4d15h20m38s=version=6.27=build-time=Feb/11/2015 13:24:13=free-memory=36741120=total-memory=67108864=cpu=MIPS 24Kc V7.4=cpu-count=1=cpu-frequency=400=cpu-load=28=free-hdd-space=116649984=total-hdd-space=134217728=write-sect-since-reboot=1070=write-sect-total=8926=bad-blocks=0=architecture-name=mipsbe=board-name=RB OmniTIK UPA-5HnD=platform=MikroTik";
+                resource_respon_cleanup(resources);
+                rb_registration_data = command("/interface/wireless/registration-table/getall", rb_ip_addresses[loop]);
+                //rb_registration_data = "!re.tag=sss=.id=*2=interface=Snake_AP1=radio-name=Gixxer->SnakeOmni=mac-address=4C:5E:0C:0F:2B:3B=ap=false=wds=false=bridge=false=rx-rate=26Mbps-20MHz/2S=tx-rate=60Mbps-40MHz/2S/SGI=packets=37184706,33176656=bytes=2871035632,2916519196=frames=33370529,16861527=frame-bytes=2887997970,2977703980=uptime=4d15h19m47s=last-activity=0ms=signal-strength=-76=signal-to-noise=40=signal-strength-ch0=-77=signal-strength-ch1=-82=tx-signal-strength-ch0=-81=tx-signal-strength-ch1=-76=strength-at-rates=-76@6Mbps 0ms,-75@HT20-0 27m45s620ms,-77@HT20-1 150ms,-76@HT20-2 780ms,-78@HT20-3 680ms,-78@HT20-4 890ms,-80@HT40-0 480ms,-80@HT40-1 290ms,-80@HT40-2 300ms,-80@HT40-3 20s830ms,-79@HT40-4 35m3s770ms=tx-signal-strength=-75=tx-ccq=76=rx-ccq=33=distance=2=routeros-version=6.19=last-ip=172.18.116.81=tx-rate-set=BW:1x-2x SGI:2x HT:0-4,9-10=tdma-timing-offset=10=tdma-tx-size=496=tdma-rx-size=1008=tdma-retx=24=tdma-winfull=0";
+                registration_respon_cleanup(rb_registration_data);
+            }
+            return "";
         }
         private string rb_wireless_data_cleanup(string rb_wireless_data)
         {
@@ -259,7 +275,7 @@ namespace Winbox_API_C_Sharp
             }
             catch (MySqlException error)
             {
-                MessageBox.Show(Convert.ToString(error));
+                //MessageBox.Show(Convert.ToString(error));
             }
             if (db_connection != null)
             {
@@ -376,7 +392,7 @@ namespace Winbox_API_C_Sharp
             }
             catch (MySqlException error)
             {
-                MessageBox.Show(Convert.ToString(error));
+                //MessageBox.Show(Convert.ToString(error));
             }
             if (db_connection != null)
             {
@@ -481,7 +497,7 @@ namespace Winbox_API_C_Sharp
             }
             catch (MySqlException error)
             {
-                MessageBox.Show(Convert.ToString(error));
+                //MessageBox.Show(Convert.ToString(error));
             }
             if (db_connection != null)
             {
@@ -565,14 +581,14 @@ namespace Winbox_API_C_Sharp
             }
             return ("");
         }
-        private string command(string command)
+        private string command(string command, string router)
         {
             string output = "";
-            MK mikrotik = new MK("172.18.112.237");
+            MK mikrotik = new MK(router);
 
             if (!mikrotik.Login("api", "api"))
             {
-                MessageBox.Show("Could not log in");
+                //MessageBox.Show("Could not log in");
                 mikrotik.Close();
                 return "false";
             }
@@ -586,6 +602,8 @@ namespace Winbox_API_C_Sharp
             }
             return output;
         }
+
+       
     }
 }
 
